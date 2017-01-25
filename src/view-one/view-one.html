@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
+
+
+<dom-module id="view-one">
+    
+    <template>
+        <iron-ajax
+        id="ajax"
+        url="https://poeditor.com/api/"
+        handle-as="json"
+        content-type="application/x-www-form-urlencoded"
+        method="POST"
+        body="api_token=1158bf237ea46edbab9052d1a95987ab&action=list_projects"
+        on-response="_handleResponse"
+        ></iron-ajax>
+        <style>
+        </style>
+
+<paper-dropdown-menu label="Language">
+   <paper-listbox class="dropdown-content">
+    <template is="dom-repeat" items="{{_languages}}">
+            <paper-item>[[item.short]] ([[item.long]])</paper-item>
+    </template>
+   </paper-listbox>
+</paper-dropdown-menu>
+
+<paper-input label="term"></paper-input>
+<paper-button primary raised>Add term</paper-button>
+<paper-button raised>Delete term</paper-button>
+<paper-button raised on-tap="sendXMLHttpRequest">Export po file</paper-button>
+
+</template>
+<script>
+    Polymer({
+        is: 'view-one',
+        properties: {
+            _language: {
+                type: String,
+                notify: true
+            },
+            _languages: {
+                type: Array,
+                value: [{short: 'da', long: 'danish'},{short: 'en-us', long:'english-us'},{short: 'de', long: 'german'}]
+            },
+            responseObject: {
+                type: Object,
+                value: "test"
+            }
+        },
+        ready:function(){
+            
+        },
+        sendXMLHttpRequest: function () {
+            console.log(this.$.ajax.body);
+            this.$.ajax.generateRequest();
+        },
+        
+         _handleResponse: function(request) {
+            console.log(request.detail.response);
+            console.log(this.$.ajax.lastResponse);
+            console.log(this.$.ajax.params);
+        }
+
+    });
+</script>
+
+</dom-module>

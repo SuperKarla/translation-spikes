@@ -1,0 +1,29 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../view-one/view-one.html">
+
+<dom-module id="translationspike-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+    <view-one></view-one>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'translationspike-app',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'translationspike-app',
+        },
+      },
+
+    });
+  </script>
+</dom-module>
