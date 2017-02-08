@@ -5,49 +5,80 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="./poeditor-helper.html">
 
-
 <dom-module id="view-one">
     <template>
-
+        <style>
+        :host{
+            display: flex;
+            margin: 20px;
+        }
+        paper-card{
+            height: 200px;
+            width: 500px;
+        }
+        .container{
+            margin: 20px;
+        }
+        </style>
+        <div>
+            
+        </div>
+        <paper-card heading="Projects">
+    <div class="container">
         <paper-dropdown-menu label="Projects">
-            <paper-listbox class="dropdown-content">
+            <paper-listbox class="dropdown-content" attr-for-selected="value" selected={{_selectedProject}}>
                 <template is="dom-repeat" items="{{_projects}}">
-                    <paper-item>[[item.name]] ([[item.id]])</paper-item>
+                    <paper-item value="{{item}}">[[item.name]]</paper-item>
                 </template>
             </paper-listbox>
         </paper-dropdown-menu>
 
-        <paper-dropdown-menu label="Language">
-            <paper-listbox class="dropdown-content">
+        <paper-dropdown-menu label="Languages" disabled="[[!_availableLanguages]]">
+            <paper-listbox class="dropdown-content" attr-for-selected="value" selected={{_selectedLanguage}}>
                 <template is="dom-repeat" items="{{_languages}}">
-                    <paper-item>[[item.short]] ([[item.long]])</paper-item>
+                    <paper-item value="{{item}}">[[item.code]] ([[item.name]])</paper-item>
                 </template>
             </paper-listbox>
         </paper-dropdown-menu>
 
-        <paper-input label="term"></paper-input>
-        <paper-button primary raised>New project</paper-button>
-        <paper-button raised>Add language</paper-button>
-        <paper-button raised on-tap="sendXMLHttpRequest">Export po file</paper-button>
-
-    </template>
+        <div>
+            <paper-button raised on-tap="DownloadAndSavePoFile">
+                downloadPoFile
+            </paper-button>
+            <paper-button raised disabled="true">Add language</paper-button>
+        </div>
+    </div>
+</paper-card>    </template>
     <script>
         Polymer({
             is: 'view-one',
             properties: {
-                _language: {
-                    type: String,
-                    notify: true
-                },
-                _languages: {
-                    type: Array,
-                    value: [{ short: 'da', long: 'danish' }, { short: 'en-us', long: 'english-us' }, { short: 'de', long: 'german' }]
-                },
                 _projects: {
                     type: Array
+                },
+                _selectedProject: {
+                    type: Object,
+                    observer: 'selectedProjectChanged'
+                },
+                _languages: {
+                    type: Array
+                },
+                _selectedLanguage: {
+                    type: Object,
+                    observer: 'selectedLanguageChanged'
+                },
+                _availableLanguages: {
+                    type: Boolean,
+                    value: false
+                },
+                terms: {
+                    type:Array,
+                    value: [],
+                    notify: true
                 }
             },
             behaviors: [PoeditorHelper],
@@ -61,7 +92,51 @@
                     .catch(err => {
                         console.log(err)
                     });
+            },
+            selectedProjectChanged: function () {
+                if (this._selectedProject.id) {
+                    this.getLanguages(this._selectedProject.id).
+                        then(res => {
+                            this._languages = res.list;
+                            if (this._languages.length > 0) {
+                                this._availableLanguages = true;
+                            } else {
+                                this._availableLanguages = false;
+                            }
+                            console.log(this._languages);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                }
+                console.log("selected project = " + this._selectedProject);
+            },
+            selectedLanguageChanged: function () {
+                console.log(this._selectedLanguage.code);
+            },
+            DownloadAndSavePoFile:function(){
+                let id   = this._selectedProject.id;
+                let lang = this._selectedLanguage.code;
+
+                this.exportPoFile(id, lang)
+                    .then(res => {
+                        this.downloadPoFile(res.item)
+                            .then(res => {
+                                console.log(res);
+                                this.terms = JSON.parse(res);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            savePoFile:function(){
+
             }
+
         });
     </script>
 

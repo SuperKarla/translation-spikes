@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="content-view">
+    <template>
+        <style>
+        :host{
+            display: flex;
+            margin: 20px;
+        }
+        paper-card{
+            width: 500px;
+            height: 800px;
+        }
+        </style>
+        <paper-card heading="Translation">
+            <paper-listbox>
+             <template is="dom-repeat" items="{{terms}}">
+                     <paper-item>[[item.term]]</paper-item>
+                     <paper-item>[[item.definition]]</paper-item>
+            </template>
+            </paper-listbox>
+        </paper-card>
+    </template>
+    <script>
+    
+    Polymer({
+        is: 'content-view',
+        properties: {
+            terms: {
+                type: Array,
+                value: [],
+                observer: 'termsChanged'
+            }
+        },
+        ready: function(){
+            console.log(this.terms);
+        },
+        termsChanged: function(){
+            console.log(this.terms);
+        }
+    });
+
+    </script>
+
+</dom-module>

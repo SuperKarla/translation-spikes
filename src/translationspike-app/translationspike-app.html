@@ -1,29 +1,63 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../view-one/view-one.html">
+<link rel="import" href="../content-view/content-view.html">
 
 <dom-module id="translationspike-app">
   <template>
     <style>
       :host {
-        display: block;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
+      paper-toolbar {
+          flex: 0 1 auto;
+          min-height: 100px;
+      }
+      main {
+        flex: 1;
+        background: grey;
+        overflow: auto;
+      }      
     </style>
-    <h2>Hello [[prop1]]</h2>
-    <view-one></view-one>
-  </template>
 
-  <script>
-    Polymer({
+    <div>
+      <paper-toolbar>
+        <paper-menu-button>
+          <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+        </paper-menu-button>  
+      </paper-toolbar>
+    </div>
+    <main>
+      <view-one terms="{{_terms}}"></view-one>
+      <content-view terms="{{_terms}}"></content-view>
+    </main>
+</template>
 
-      is: 'translationspike-app',
+<script>
+  Polymer({
 
-      properties: {
-        prop1: {
-          type: String,
-          value: 'translationspike-app',
-        },
+    is: 'translationspike-app',
+
+    properties: {
+      _title: {
+        type: String,
+        value: 'translationspike-app',
       },
+      _terms: {
+        type: Array,
+        value: [{"term":"test"}, {"term":"test"}, {"term":"test"},{"term":"test"}],
+        notify: true,
+        observer: 'onTermsChanged'
+      }
+    },
+    onTermsChanged: function(){
+      console.log("terms changed: " + this._terms);
+    }
 
-    });
-  </script>
+  });
+</script>
 </dom-module>
